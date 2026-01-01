@@ -1,2 +1,2 @@
 start:
-	flutter run -d linux
+	flutter run --dart-define-from-file=config.local.json -d linux
