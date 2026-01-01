@@ -18,3 +18,13 @@ samples, guidance on mobile development, and a full API reference.
 
 # create new project
 flutter create --org io.github.amsatrio flutter_crud_demo
+
+# one time build
+dart run build_runner build
+
+# run project 
+flutter run -d linux
+
+# dependencies
+## state management
+flutter_riverpod
