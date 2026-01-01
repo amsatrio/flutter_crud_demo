@@ -1,0 +1,6 @@
+{
+  "API_KEY": "some_secret_api_key_value",
+  "BASE_URL": "http://localhost:8811",
+  "DEBUG_ENABLED": false,
+  "DARK_THEME_ENABLED": true
+}
