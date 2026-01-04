@@ -4,7 +4,6 @@ import 'package:flutter_crud_demo/modules/m_biodata/service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void _showMBiodataDialog(BuildContext context, WidgetRef ref, {MBiodata? biodata}) {
-  // Initialize controllers with existing data if editing
   final nameController = TextEditingController(text: biodata?.fullname ?? '');
   final phoneController = TextEditingController(text: biodata?.mobilePhone ?? '');
 
@@ -39,16 +38,13 @@ void _showMBiodataDialog(BuildContext context, WidgetRef ref, {MBiodata? biodata
 
             if (name.isNotEmpty && phone.isNotEmpty) {
               if (biodata == null) {
-                // Logic for Adding (Note: Your addMBiodata currently only accepts 'title')
-                // You might need to update your Service to accept name/phone
                 await ref.read(serviceProvider.notifier).addMBiodata(name);
               } else {
-                // Logic for Editing
                 await ref.read(serviceProvider.notifier).editMBiodata(
                       biodata.id,
                       name,
                       phone,
-                      false, // isDelete
+                      false,
                     );
               }
               if (context.mounted) Navigator.pop(context);
@@ -65,14 +61,12 @@ class MBiodataView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the AsyncNotifierProvider
     final biodataList = ref.watch(serviceProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Biodata CRUD'),
         actions: [
-          // Refresh button to manually trigger build()
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.invalidate(serviceProvider),
