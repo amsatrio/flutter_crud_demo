@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_crud_demo/config/environment.dart';
 import 'package:flutter_crud_demo/config/logger.dart';
 import 'package:flutter_crud_demo/modules/counter/view.dart';
 import 'package:flutter_crud_demo/modules/m_biodata/view.dart';
-import 'package:flutter_crud_demo/modules/todo/view.dart';
+import 'package:flutter_crud_demo/modules/todo/view.dart' as todo;
+import 'package:flutter_crud_demo/modules/todo_objectbox/injector.dart';
+import 'package:flutter_crud_demo/modules/todo_objectbox/objectbox.dart';
+import 'package:flutter_crud_demo/modules/todo_objectbox/view.dart' as todo_objectbox;
+import 'package:flutter_crud_demo/modules/todo_sqflite/injector.dart';
+import 'package:flutter_crud_demo/modules/todo_sqflite/view.dart' as todo_sqflite;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+
+final getIt = GetIt.instance;
 
 final class AppObserver extends ProviderObserver {
   @override
@@ -35,7 +44,15 @@ final class AppObserver extends ProviderObserver {
   }
 }
 
-void main() {
+late ObjectBox objectBox;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  getItTodoSqflite();
+  getItTodoObjectBox();
+  
+  objectBox = await ObjectBox.create();
   runApp(ProviderScope(observers: [AppObserver()], child: const MyApp()));
 }
 
@@ -56,7 +73,19 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: 'todo',
           builder: (BuildContext context, GoRouterState state) {
-            return const TodoView();
+            return const todo.TodoView();
+          },
+        ),
+                GoRoute(
+          path: 'todo-sqflite',
+          builder: (BuildContext context, GoRouterState state) {
+            return const todo_sqflite.TodoView();
+          },
+        ),
+        GoRoute(
+          path: 'todo-objectbox',
+          builder: (BuildContext context, GoRouterState state) {
+            return const todo_objectbox.TodoView();
           },
         ),
         GoRoute(
@@ -100,7 +129,7 @@ class MenuScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<String> pages = ['counter', 'todo', 'm-biodata'];
+    final List<String> pages = ['counter', 'todo', 'todo-sqflite', 'todo-objectbox', 'm-biodata'];
 
     final themeMode = ref.watch(themeProvider);
 
@@ -108,6 +137,17 @@ class MenuScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Navigation Menu'),
         actions: [
+          IconButton(
+            onPressed: () {
+              SystemChrome.setEnabledSystemUIMode(
+                View.of(context).platformDispatcher.views.first.devicePixelRatio > 0 
+                ? SystemUiMode.immersiveSticky 
+                : SystemUiMode.edgeToEdge
+              );
+            },
+            icon: const Icon(Icons.fullscreen),
+            tooltip: 'Toggle Full Screen',
+          ),
           IconButton(
             onPressed: () {
               ref

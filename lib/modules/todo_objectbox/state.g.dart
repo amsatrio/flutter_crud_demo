@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'service.dart';
+part of 'state.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,43 +9,43 @@ part of 'service.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(Service)
-final serviceProvider = ServiceProvider._();
+@ProviderFor(TodoState)
+final todoStateProvider = TodoStateProvider._();
 
-final class ServiceProvider
-    extends $AsyncNotifierProvider<Service, List<MBiodata>> {
-  ServiceProvider._()
+final class TodoStateProvider
+    extends $AsyncNotifierProvider<TodoState, List<Todo>> {
+  TodoStateProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'serviceProvider',
+        name: r'todoStateProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$serviceHash();
+  String debugGetCreateSourceHash() => _$todoStateHash();
 
   @$internal
   @override
-  Service create() => Service();
+  TodoState create() => TodoState();
 }
 
-String _$serviceHash() => r'9de53d9d258e36244d589848106bed190a75d096';
+String _$todoStateHash() => r'47f705e8003da0680e9f731ccd6c4b254432b67a';
 
-abstract class _$Service extends $AsyncNotifier<List<MBiodata>> {
-  FutureOr<List<MBiodata>> build();
+abstract class _$TodoState extends $AsyncNotifier<List<Todo>> {
+  FutureOr<List<Todo>> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<MBiodata>>, List<MBiodata>>;
+    final ref = this.ref as $Ref<AsyncValue<List<Todo>>, List<Todo>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<MBiodata>>, List<MBiodata>>,
-              AsyncValue<List<MBiodata>>,
+              AnyNotifier<AsyncValue<List<Todo>>, List<Todo>>,
+              AsyncValue<List<Todo>>,
               Object?,
               Object?
             >;
