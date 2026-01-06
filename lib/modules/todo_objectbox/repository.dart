@@ -21,8 +21,7 @@ Future<List<Todo>> findAll() async {
 
   // UPDATE
   Future<Todo> update(Todo todo) async {
-    final id = await objectBox.todoBox.putAsync(todo);
-    return todo.copyWith(id: id);
+    return await objectBox.todoBox.putAndGetAsync(todo);
   }
 
   // DELETE

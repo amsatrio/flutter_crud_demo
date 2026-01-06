@@ -29,9 +29,9 @@ class TodoState extends _$TodoState {
       final response = await getIt<TodoService>().update(id, title, completed);
       return state.value!
           .map(
-            (data) => data.id == id
-                ? response.copyWith(title: title, completed: completed)
-                : response,
+            (data) => response.id == data.id
+                ? data.copyWith(title: title, completed: completed)
+                : data,
           )
           .toList();
     });
