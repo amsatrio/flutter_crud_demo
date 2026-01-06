@@ -3,4 +3,5 @@ class Environment {
   static const String baseUrl = String.fromEnvironment('BASE_URL');
   static const bool debugEnabled = bool.fromEnvironment('DEBUG_ENABLED', defaultValue: true);
   static const bool darkThemeEnabled = bool.fromEnvironment('DARK_THEME_ENABLED', defaultValue: false);
+  static const bool fullscreenEnabled = bool.fromEnvironment('FULL_SCREEN_ENABLED', defaultValue: false);
 }

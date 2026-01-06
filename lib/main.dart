@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_crud_demo/config/environment.dart';
 import 'package:flutter_crud_demo/config/logger.dart';
 import 'package:flutter_crud_demo/modules/counter/view.dart';
 import 'package:flutter_crud_demo/modules/m_biodata/view.dart';
+import 'package:flutter_crud_demo/modules/portfolio/view.dart';
 import 'package:flutter_crud_demo/modules/todo/view.dart' as todo;
 import 'package:flutter_crud_demo/modules/todo_objectbox/injector.dart';
 import 'package:flutter_crud_demo/modules/todo_objectbox/objectbox.dart';
-import 'package:flutter_crud_demo/modules/todo_objectbox/view.dart' as todo_objectbox;
+import 'package:flutter_crud_demo/modules/todo_objectbox/view.dart'
+    as todo_objectbox;
 import 'package:flutter_crud_demo/modules/todo_sqflite/injector.dart';
-import 'package:flutter_crud_demo/modules/todo_sqflite/view.dart' as todo_sqflite;
+import 'package:flutter_crud_demo/modules/todo_sqflite/view.dart'
+    as todo_sqflite;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:window_manager/window_manager.dart';
 
 final getIt = GetIt.instance;
 
@@ -51,8 +54,11 @@ Future<void> main() async {
 
   getItTodoSqflite();
   getItTodoObjectBox();
-  
+
   objectBox = await ObjectBox.create();
+
+  await windowManager.ensureInitialized();
+
   runApp(ProviderScope(observers: [AppObserver()], child: const MyApp()));
 }
 
@@ -76,7 +82,7 @@ final GoRouter _router = GoRouter(
             return const todo.TodoView();
           },
         ),
-                GoRoute(
+        GoRoute(
           path: 'todo-sqflite',
           builder: (BuildContext context, GoRouterState state) {
             return const todo_sqflite.TodoView();
@@ -94,6 +100,12 @@ final GoRouter _router = GoRouter(
             return const MBiodataView();
           },
         ),
+        GoRoute(
+          path: 'portfolio',
+          builder: (BuildContext context, GoRouterState state) {
+            return const PortfolioView();
+          },
+        ),
       ],
     ),
   ],
@@ -101,6 +113,9 @@ final GoRouter _router = GoRouter(
 
 final themeProvider = StateProvider<ThemeMode>(
   (ref) => Environment.darkThemeEnabled ? ThemeMode.dark : ThemeMode.light,
+);
+final fullscreenProvider = StateProvider<bool>(
+  (ref) => Environment.fullscreenEnabled ? true : false,
 );
 
 class MyApp extends ConsumerWidget {
@@ -129,23 +144,29 @@ class MenuScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<String> pages = ['counter', 'todo', 'todo-sqflite', 'todo-objectbox', 'm-biodata'];
+    final List<String> pages = [
+      'counter',
+      'todo',
+      'todo-sqflite',
+      'todo-objectbox',
+      'm-biodata',
+      'portfolio',
+    ];
 
     final themeMode = ref.watch(themeProvider);
+    final screenMode = ref.watch(fullscreenProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Navigation Menu'),
         actions: [
           IconButton(
-            onPressed: () {
-              SystemChrome.setEnabledSystemUIMode(
-                View.of(context).platformDispatcher.views.first.devicePixelRatio > 0 
-                ? SystemUiMode.immersiveSticky 
-                : SystemUiMode.edgeToEdge
-              );
+            onPressed: () async {
+              final status = await windowManager.isFullScreen();
+              ref.read(fullscreenProvider.notifier).state = !status;
+              await windowManager.setFullScreen(!status);
             },
-            icon: const Icon(Icons.fullscreen),
+            icon: Icon(screenMode ? Icons.close_fullscreen : Icons.open_in_full),
             tooltip: 'Toggle Full Screen',
           ),
           IconButton(
@@ -159,6 +180,7 @@ class MenuScreen extends ConsumerWidget {
             icon: Icon(
               themeMode == ThemeMode.light ? Icons.dark_mode : Icons.light_mode,
             ),
+            tooltip: 'Toggle Theme Mode',
           ),
         ],
       ),
